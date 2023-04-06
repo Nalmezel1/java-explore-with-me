@@ -17,9 +17,11 @@ import ru.practicum.ewm.stats.dto.HitDtoRequest;
 
 public class StatsClient extends BaseClient {
 
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public StatsClient(String serverUrl, RestTemplateBuilder builder) {
         super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new).build()
+                .requestFactory(HttpComponentsClientHttpRequestFactory::new).build()
         );
     }
 
@@ -33,8 +35,6 @@ public class StatsClient extends BaseClient {
 
         String path;
         Map<String, Object> parameters;
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         if (uri.isPresent()) {
             path = "/stats?start={start}&end={end}&uri={uri}&unique={unique}";
