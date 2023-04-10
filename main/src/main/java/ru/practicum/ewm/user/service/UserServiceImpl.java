@@ -1,13 +1,11 @@
 package ru.practicum.ewm.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.exceptions.CategoryNotExistException;
 import ru.practicum.ewm.exceptions.UserNotExistException;
 import ru.practicum.ewm.user.dto.UserDto;
 
@@ -50,6 +48,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotExistException("Пользователь с ID " + userId + " не найдена.");
         }
     }
+
     public void checkUserName(String userName) {
         if (userRepository.existsByName(userName)) {
             throw new NameAlreadyExistException("Пользователь с именем " + userName + " уже существует.");

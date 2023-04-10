@@ -65,6 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new CategoryNotExistException("атекория с ID " + categoryId + " не найдена.");
         }
     }
+
     public void checkCategoryName(String categoryName) {
         if (categoryRepository.existsByName(categoryName)) {
             throw new NameAlreadyExistException("атекория с именем " + categoryName + " уже существует.");

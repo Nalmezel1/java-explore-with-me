@@ -13,5 +13,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CompilationMapper {
     CompilationDto mapToCompilationDto(Compilation compilation);
+
     List<CompilationDto> mapToListCompilationDto(List<Compilation> compilations);
 }
