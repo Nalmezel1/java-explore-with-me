@@ -18,6 +18,8 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
 public class StatsServerController {
@@ -26,7 +28,7 @@ public class StatsServerController {
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     @PostMapping("/hit")
-    public ResponseEntity<HitDtoRequest> create(@RequestBody HitDtoRequest dtoRequest) {
+    public ResponseEntity<HitDtoRequest> create(@Valid @RequestBody HitDtoRequest dtoRequest) {
         return new ResponseEntity<>(statsServerService.post(dtoRequest), HttpStatus.CREATED);
     }
 
