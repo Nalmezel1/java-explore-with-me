@@ -2,7 +2,6 @@ package ru.practicum.ewm.event.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +27,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/users/{userId}/events")
 @RequiredArgsConstructor
-@Validated
 public class PrivateEventController {
     private final EventService eventService;
 
@@ -42,8 +40,8 @@ public class PrivateEventController {
 
     @GetMapping
     public List<EventDtoShort> getEventsByUser(@PathVariable Long userId,
-                                               @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
-                                               @RequestParam(name = "size", defaultValue = "10", required = false) Integer size) {
+                                               @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                               @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return eventService.getEvents(userId, from, size);
     }
 

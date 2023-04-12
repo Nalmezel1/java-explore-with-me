@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.event.dto.EventDtoShort;
 
-
 import java.util.List;
 
 @Getter
@@ -13,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CompilationDto {
     private Long id;
-    private Boolean pinned;
+    private boolean pinned;
     private String title;
     private List<EventDtoShort> events;
 }

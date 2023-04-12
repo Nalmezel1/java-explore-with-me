@@ -3,6 +3,7 @@ package ru.practicum.ewm.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.exceptions.*;
 import ru.practicum.ewm.request.dto.RequestDto;
 import ru.practicum.ewm.request.dto.RequestDtoStatusUpdate;
 import ru.practicum.ewm.request.dto.RequestDtoStatusUpdateResult;
@@ -10,13 +11,6 @@ import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.request.model.Request;
 import ru.practicum.ewm.enums.RequestStatus;
 import ru.practicum.ewm.enums.RequestStatusToUpdate;
-import ru.practicum.ewm.exceptions.EventIsNotPublishedException;
-import ru.practicum.ewm.exceptions.EventNotExistException;
-import ru.practicum.ewm.exceptions.ParticipantLimitException;
-import ru.practicum.ewm.exceptions.RequestAlreadyConfirmedException;
-import ru.practicum.ewm.exceptions.RequestAlreadyExistException;
-import ru.practicum.ewm.exceptions.RequestNotExistException;
-import ru.practicum.ewm.exceptions.WrongUserException;
 import ru.practicum.ewm.request.mapper.RequestMapper;
 import ru.practicum.ewm.event.repository.EventRepository;
 
@@ -42,11 +36,12 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public RequestDto createRequest(Long userId, Long eventId) {
         if (requestRepository.existsByRequesterAndEvent(userId, eventId)) {
             throw new RequestAlreadyExistException("Запрос уже существует");
         }
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistException("Ивент не существует"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Ивент не существует"));
         if (event.getInitiator().getId().equals(userId)) {
             throw new WrongUserException("Инициатор не может подать заявку");
         }
@@ -57,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
 
         List<Request> requests = requestRepository.findAllByEvent(eventId);
 
-        if (!event.getRequestModeration() && requests.size() >= event.getParticipantLimit()) {
+        if (!event.getRequestModeration() && requests.size() >= event.getParticipantLimit() && event.getParticipantLimit() != 0) {
             throw new ParticipantLimitException("Лимит учасников");
         }
 
@@ -72,7 +67,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public RequestDtoStatusUpdateResult updateRequests(Long userId, Long eventId, RequestDtoStatusUpdate requestDtoStatusUpdate) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistException("Ивент не найден"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Ивент не найден"));
         RequestDtoStatusUpdateResult result = new RequestDtoStatusUpdateResult();
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
@@ -120,8 +115,9 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public RequestDto cancelRequests(Long userId, Long requestId) {
-        Request request = requestRepository.findByRequesterAndId(userId, requestId).orElseThrow(() -> new RequestNotExistException("Запрос не найден"));
+        Request request = requestRepository.findByRequesterAndId(userId, requestId).orElseThrow(() -> new EntityNotFoundException("Запрос не найден"));
         request.setStatus(RequestStatus.CANCELED);
         return requestMapper.toRequestDto(requestRepository.save(request));
     }

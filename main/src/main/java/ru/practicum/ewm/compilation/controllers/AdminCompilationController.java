@@ -2,7 +2,6 @@ package ru.practicum.ewm.compilation.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +20,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/admin/compilations")
-@Validated
 @RequiredArgsConstructor
 public class AdminCompilationController {
     private final CompilationService compilationService;

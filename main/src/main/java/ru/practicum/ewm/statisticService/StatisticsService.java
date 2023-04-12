@@ -18,7 +18,5 @@ public interface StatisticsService {
     void sendStatForEveryEvent(List<Event> events, String remoteAddr, LocalDateTime now,
                                String nameService);
 
-    void setView(Event event);
-
     List<HitDtoResponse> getStats(LocalDateTime startTime, LocalDateTime endTime, List<String> uris);
 }

@@ -5,41 +5,33 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.location.LocationDto;
-import ru.practicum.ewm.user.dto.UserDtoShort;
-import ru.practicum.ewm.enums.EventState;
 
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 import static ru.practicum.ewm.util.DateFormatConstant.TIME_PATTERN;
 
-
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class EventDto {
+public class EventDtoUpdate {
+    @Size(min = 3, max = 500)
     private String annotation;
-    private CategoryDto category;
-    private Integer confirmedRequests;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TIME_PATTERN)
-    private LocalDateTime createdOn;
+    private Long category;
+    @Size(min = 20, max = 2000)
     private String description;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TIME_PATTERN)
     private LocalDateTime eventDate;
-    private Long id;
-    private UserDtoShort initiator;
     private LocationDto location;
     private Boolean paid;
-    private Long participantLimit;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TIME_PATTERN)
-    private LocalDateTime publishedOn;
+    @PositiveOrZero
+    private Long participantLimit;
     private Boolean requestModeration;
-    private EventState state;
+    @Size(min = 2, max = 120)
     private String title;
-    private Long views;
 }
+

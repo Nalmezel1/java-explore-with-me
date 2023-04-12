@@ -9,18 +9,7 @@ import ru.practicum.ewm.location.Location;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.enums.EventState;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -36,7 +25,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String annotation;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
@@ -46,12 +35,14 @@ public class Event {
     private String description;
 
     private LocalDateTime eventDate;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "initiator_id", referencedColumnName = "id")
     private User initiator;
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
-    private Location location;
+
+    @Column(name = "location_lat")
+    private float locationLat;
+    @Column(name = "location_lon")
+    private float locationLon;
     private Boolean paid;
     private int participantLimit;
     private LocalDateTime publishedOn;
@@ -59,6 +50,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventState state;
     private String title;
+
     private Long views;
     @Transient
     private final String datePattern = TIME_PATTERN;
@@ -81,7 +73,8 @@ public class Event {
         this.eventDate = eventDate;
         this.id = id;
         this.initiator = initiator;
-        this.location = location;
+        this.locationLat = location.getLat();
+        this.locationLon = location.getLon();
         this.paid = paid;
         this.participantLimit = participantLimit;
         this.publishedOn = publishedOn;
@@ -96,6 +89,16 @@ public class Event {
             this.state = eventState;
         }
         this.title = title;
+
         this.views = views;
+    }
+
+    public void setLocation(Location location){
+        this.locationLat = location.getLat();
+        this.locationLon = location.getLon();
+    }
+
+    public Location getLocation(){
+        return new Location(this.getLocationLat(),this.getLocationLon());
     }
 }

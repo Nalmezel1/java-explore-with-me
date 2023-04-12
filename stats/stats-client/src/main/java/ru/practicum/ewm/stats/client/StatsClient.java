@@ -18,7 +18,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.ewm.stats.dto.HitDtoRequest;
 
 
-
 @Service
 public class StatsClient extends BaseClient {
 
@@ -41,10 +40,15 @@ public class StatsClient extends BaseClient {
                                            List<String> uri,
                                            boolean unique) {
 
+
+        System.out.println("startTime - " + start);
+        System.out.println("endTime - " + end);
+        System.out.println("uris - " + uri);
+
         String path;
         Map<String, Object> parameters;
 
-        if (Optional.of(uri).isPresent()) {
+        if (!uri.equals(null)) {
             path = "/stats?start={start}&end={end}&uri={uri}&unique={unique}";
             parameters = Map.of(
                     "start", start.format(formatter),
@@ -52,16 +56,15 @@ public class StatsClient extends BaseClient {
                     "uri", Optional.of(uri).get(),
                     "unique", unique
             );
-
-
         } else {
             path = "/stats?start={start}&end={end}&unique={unique}";
             parameters = Map.of("start", start.format(formatter), "end", end.format(formatter),
                     "unique", unique
             );
-
         }
-        ResponseEntity<String> response = restTemplate.getForEntity(path,String.class, parameters);
+
+        ResponseEntity<String> response = restTemplate.getForEntity(path, String.class, parameters);
+
 
         return response;
     }

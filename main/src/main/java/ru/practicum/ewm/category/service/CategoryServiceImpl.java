@@ -8,23 +8,26 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.CategoryDtoShort;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.exceptions.CategoryIsNotEmptyException;
-import ru.practicum.ewm.exceptions.CategoryNotExistException;
+import ru.practicum.ewm.exceptions.EntityNotFoundException;
 import ru.practicum.ewm.exceptions.NameAlreadyExistException;
 import ru.practicum.ewm.category.mapper.CategoryMapper;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.event.repository.EventRepository;
 
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final CategoryMapper categoryMapper;
 
     @Override
+    @Transactional
     public CategoryDto createCategory(CategoryDtoShort categoryDtoShort) {
         checkCategoryName(categoryDtoShort.getName());
         return categoryMapper.toCategoryDto(categoryRepository.save(categoryMapper.toCategory(categoryDtoShort)));
@@ -44,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long categoryId) {
         if (eventRepository.existsByCategoryId(categoryId)) {
             throw new CategoryIsNotEmptyException("Категория не пуста");
@@ -52,17 +56,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(Long categoryId, CategoryDto categoryDto) {
         checkCategoryId(categoryId);
         checkCategoryName(categoryDto.getName());
         Category category = categoryRepository.getReferenceById(categoryId);
         category.setName(categoryDto.getName());
-        return categoryMapper.toCategoryDto(categoryRepository.save(category));
+        return categoryMapper.toCategoryDto(category);
     }
 
     public void checkCategoryId(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
-            throw new CategoryNotExistException("атекория с ID " + categoryId + " не найдена.");
+            throw new EntityNotFoundException("атекория с ID " + categoryId + " не найдена.");
         }
     }
 

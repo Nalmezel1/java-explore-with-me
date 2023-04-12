@@ -7,7 +7,6 @@ import ru.practicum.ewm.compilation.dto.CompilationDtoNew;
 import ru.practicum.ewm.compilation.dto.RequestDtoUpdateCompilation;
 import ru.practicum.ewm.compilation.model.Compilation;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.exceptions.CompilationNotExistException;
 import ru.practicum.ewm.compilation.mapper.CompilationMapper;
 import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.event.repository.EventRepository;
@@ -18,14 +17,17 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.exceptions.EntityNotFoundException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CompilationServiceImpl implements CompilationService {
     private final EventRepository eventRepository;
     private final EventService eventService;
@@ -36,10 +38,17 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto createCompilation(CompilationDtoNew compilationDtoNew) {
-        List<Event> events = eventRepository.findAllByIdIn(compilationDtoNew.getEvents());
+
+        List<Event> events;
+        if (compilationDtoNew.getEvents() == null || compilationDtoNew.getEvents().isEmpty()) {
+            events = new ArrayList<>();
+        } else {
+            events = eventRepository.findAllById(compilationDtoNew.getEvents());
+        }
+
         Compilation compilation = new Compilation();
         compilation.setEvents(new HashSet<>(events));
-        compilation.setPinned(compilationDtoNew.getPinned());
+        compilation.setPinned(compilationDtoNew.isPinned());
         compilation.setTitle(compilationDtoNew.getTitle());
 
         Compilation savedCompilation = compilationRepository.save(compilation);
@@ -48,7 +57,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     public CompilationDto getCompilation(Long compId) {
         Compilation compilation = compilationRepository.findById(compId)
-                .orElseThrow(() -> new CompilationNotExistException("Подборка не существует"));
+                .orElseThrow(() -> new EntityNotFoundException("Подборка не существует"));
         return mapper.mapToCompilationDto(compilation);
     }
 
@@ -82,16 +91,16 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto updateCompilation(Long compId, RequestDtoUpdateCompilation requestDtoUpdateCompilation) {
 
-        Compilation oldCompilation = compilationRepository.findById(compId).orElseThrow(() -> new CompilationNotExistException("Подборка не существует"));
+        Compilation oldCompilation = compilationRepository.findById(compId).orElseThrow(() -> new EntityNotFoundException("Подборка не существует"));
         List<Long> eventsIds = requestDtoUpdateCompilation.getEvents();
         if (eventsIds != null) {
             List<Event> events = eventRepository.findAllByIdIn(requestDtoUpdateCompilation.getEvents());
             oldCompilation.setEvents(new HashSet<>(events));
         }
-        if (requestDtoUpdateCompilation.getPinned() != null) {
-            oldCompilation.setPinned(requestDtoUpdateCompilation.getPinned());
-        }
-        if (requestDtoUpdateCompilation.getTitle() != null) {
+
+        oldCompilation.setPinned(requestDtoUpdateCompilation.isPinned());
+
+        if (requestDtoUpdateCompilation.getTitle() != null && !requestDtoUpdateCompilation.getTitle().isBlank()) {
             oldCompilation.setTitle(requestDtoUpdateCompilation.getTitle());
         }
         Compilation updatedCompilation = compilationRepository.save(oldCompilation);
@@ -100,15 +109,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Transactional
     public void deleteCompilation(Long compId) {
-        compilationRepository.findById(compId).orElseThrow(() -> new CompilationNotExistException("Подборка не существует"));
+        compilationRepository.findById(compId).orElseThrow(() -> new EntityNotFoundException("Подборка не существует"));
         compilationRepository.deleteById(compId);
-    }
-
-    private void setView(Compilation compilation) {
-        Set<Event> setEvents = compilation.getEvents();
-        if (!setEvents.isEmpty()) {
-            List<Event> events = new ArrayList<>(setEvents);
-            eventService.setView(events);
-        }
     }
 }

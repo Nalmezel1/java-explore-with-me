@@ -23,4 +23,14 @@ public class Location {
     private Long id;
     private Float lat;
     private Float lon;
+
+    public boolean isFilled() {
+        return lat != null && lon != null;
+    }
+
+    public Location(float lat,float lon){
+        this.lat = lat;
+        this.lon = lon;
+    }
+
 }
