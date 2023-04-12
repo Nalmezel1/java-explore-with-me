@@ -3,7 +3,6 @@ package ru.practicum.ewm.event.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exceptions.*;
@@ -35,7 +34,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -148,15 +146,12 @@ public class EventServiceImpl implements EventService {
                                                     Integer from, Integer size, HttpServletRequest request) {
 
 
-
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Event> query = builder.createQuery(Event.class);
 
 
-
         Root<Event> root = query.from(Event.class);
         Predicate criteria = builder.conjunction();
-
 
 
         if (text != null) {
@@ -379,13 +374,9 @@ public class EventServiceImpl implements EventService {
         LocalDateTime startTime = start;
         LocalDateTime endTime = LocalDateTime.now();
 
-        System.out.println("----------------------------------------------------------------------------------");
-        System.out.println("startTime - " + startTime);
-        System.out.println("endTime - " + endTime);
-        System.out.println("uris - " + uris);
         System.out.println(statisticsService.getStats(startTime, endTime, uris));
         List<HitDtoResponse> stats = statisticsService.getStats(startTime, endTime, uris);
-        System.out.println("----------------------------------------------------------------------------------");
+
         stats.forEach((stat) ->
                 eventsUri.get(stat.getUri()).setViews(stat.getHits()));
     }
