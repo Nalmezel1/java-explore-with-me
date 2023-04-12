@@ -59,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto updateCategory(Long categoryId, CategoryDto categoryDto) {
         checkCategoryId(categoryId);
-        if(!categoryRepository.getReferenceById(categoryId).getName().equals(categoryDto.getName())){
+        if (!categoryRepository.getReferenceById(categoryId).getName().equals(categoryDto.getName())) {
             checkCategoryName(categoryDto.getName());
         }
         Category category = categoryRepository.getReferenceById(categoryId);

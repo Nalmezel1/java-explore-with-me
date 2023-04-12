@@ -28,7 +28,7 @@ public class Location {
         return lat != null && lon != null;
     }
 
-    public Location(float lat,float lon){
+    public Location(float lat, float lon) {
         this.lat = lat;
         this.lon = lon;
     }

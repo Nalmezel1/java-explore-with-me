@@ -7,7 +7,6 @@ import ru.practicum.ewm.event.dto.EventDtoAdminUpdate;
 import ru.practicum.ewm.event.dto.EventDtoUserUpdate;
 import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.enums.SortValue;
-import ru.practicum.ewm.event.model.Event;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -32,7 +31,5 @@ public interface EventService {
                                              Integer size, HttpServletRequest request);
 
     EventDto getEvent(Long id, HttpServletRequest request);
-
-    public void setView(List<EventDto> events);
 
 }

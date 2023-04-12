@@ -34,14 +34,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         String remoteAddr = request.getRemoteAddr();
 
 
-
-            HitDtoRequest requestDto = new HitDtoRequest();
+        HitDtoRequest requestDto = new HitDtoRequest();
         requestDto.setTimestamp(now);
         requestDto.setUri("/events");
-        requestDto.setApp(app );
+        requestDto.setApp(app);
         requestDto.setIp(remoteAddr);
         statsClient.createHit(requestDto);
-        sendStatForTheEvent(event.getId(), remoteAddr, now, app );
+        sendStatForTheEvent(event.getId(), remoteAddr, now, app);
     }
 
     @Override

@@ -16,6 +16,7 @@ public interface EventMapper {
 
     @Mapping(source = "category", target = "category.id")
     Event toEventModel(EventDtoNew eventDtoNew);
+
     Event toEventModel(EventDto eventDto);
 
     List<EventDtoShort> toEventShortDtoList(List<Event> events);

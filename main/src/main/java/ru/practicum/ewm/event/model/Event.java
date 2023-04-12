@@ -93,12 +93,12 @@ public class Event {
         this.views = views;
     }
 
-    public void setLocation(Location location){
+    public void setLocation(Location location) {
         this.locationLat = location.getLat();
         this.locationLon = location.getLon();
     }
 
-    public Location getLocation(){
-        return new Location(this.getLocationLat(),this.getLocationLon());
+    public Location getLocation() {
+        return new Location(this.getLocationLat(), this.getLocationLon());
     }
 }

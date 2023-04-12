@@ -50,6 +50,7 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("Пользователь с ID " + userId + " не найдена.");
         }
     }
+
     public void checkUserName(String userName) {
         if (userRepository.existsByName(userName)) {
             throw new NameAlreadyExistException("Пользователь с именем " + userName + " уже существует.");
