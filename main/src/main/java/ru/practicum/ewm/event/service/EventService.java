@@ -32,4 +32,6 @@ public interface EventService {
 
     EventDto getEvent(Long id, HttpServletRequest request);
 
+    public void setView(List<EventDto> events);
+
 }
